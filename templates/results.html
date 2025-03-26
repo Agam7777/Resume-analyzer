@@ -22,8 +22,8 @@
         }
 
         .container {
-            max-width: 900px;
-            padding: 2rem 1rem;
+            max-width: 1200px;
+            padding: 2rem;
         }
 
         .header-section {
@@ -81,6 +81,7 @@
 
         .ranked-results {
             display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
             gap: 1.5rem;
         }
 
@@ -88,13 +89,17 @@
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
             transition: transform 0.3s ease;
             border-left: 5px solid transparent;
+            display: flex;
+            flex-direction: column;
+            height: 350px;
+            overflow: hidden;
         }
 
         .result-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .result-card[data-rank="1"] { border-left-color: #ffd700; }
@@ -104,26 +109,30 @@
         .rank-badge {
             display: flex;
             align-items: center;
-            justify-content: center;
-            background-color: #f4f6f9;
             padding: 1rem;
             text-align: center;
+            flex-direction: row;
+            justify-content: flex-start;
+            background-color: #f4f6f9;
+            border-bottom: 1px solid #dee2e6;
         }
 
         .rank-badge .rank-number {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--primary-color);
             margin-right: 0.5rem;
         }
 
         .rank-icon {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             margin-left: 0.5rem;
         }
 
         .result-content {
             padding: 1.5rem;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
         .match-score {
@@ -170,6 +179,7 @@
 
         .suggestions-list {
             padding-left: 1.5rem;
+            margin-bottom: 0;
         }
 
         .suggestions-list li {
@@ -202,22 +212,41 @@
         }
 
         /* Custom scrollbar */
-        .content-box::-webkit-scrollbar {
+        .content-box::-webkit-scrollbar,
+        .result-content::-webkit-scrollbar {
             width: 8px;
         }
 
-        .content-box::-webkit-scrollbar-track {
+        .content-box::-webkit-scrollbar-track,
+        .result-content::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 4px;
         }
 
-        .content-box::-webkit-scrollbar-thumb {
+        .content-box::-webkit-scrollbar-thumb,
+        .result-content::-webkit-scrollbar-thumb {
             background: #c1c1c1;
             border-radius: 4px;
         }
 
-        .content-box::-webkit-scrollbar-thumb:hover {
+        .content-box::-webkit-scrollbar-thumb:hover,
+        .result-content::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
+        }
+
+        @media (max-width: 768px) {
+            .ranked-results {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .result-card {
+                height: auto;
+                max-height: 400px;
+            }
         }
     </style>
 </head>
@@ -248,62 +277,56 @@
             <div class="ranked-results">
                 {% for result in results %}
                 <div class="result-card" data-rank="{{ loop.index }}">
-                    <div class="row g-0">
-                        <div class="col-md-2 rank-badge">
-                            <span class="rank-number">{{ loop.index }}</span>
-                            {% if loop.index == 1 %}
-                            <i class="fas fa-crown rank-icon text-warning"></i>
-                            {% elif loop.index == 2 %}
-                            <i class="fas fa-medal rank-icon text-secondary"></i>
-                            {% elif loop.index == 3 %}
-                            <i class="fas fa-medal rank-icon text-bronze"></i>
-                            {% else %}
-                            <i class="fas fa-file-alt rank-icon text-muted"></i>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-10">
-                            <div class="result-content">
-                                <div class="result-header">
-                                    <h3 class="mb-3">{{ result.filename }}</h3>
-                                    <div class="match-score">
-                                        <div class="progress-container">
-                                            <div class="progress-bar">
-                                                <div class="progress" data-percent="{{ result.similarity }}"></div>
-                                            </div>
-                                            <span class="score-value">{{ result.similarity }}%</span>
-                                        </div>
-                                        <div class="score-label">
-                                            {% if result.similarity >= 80 %}
-                                            Excellent Match
-                                            {% elif result.similarity >= 60 %}
-                                            Good Match
-                                            {% elif result.similarity >= 40 %}
-                                            Moderate Match
-                                            {% else %}
-                                            Low Match
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                    <div class="rank-badge">
+                        <span class="rank-number">{{ loop.index }}</span>
+                        {% if loop.index == 1 %}
+                        <i class="fas fa-crown rank-icon text-warning"></i>
+                        {% elif loop.index == 2 %}
+                        <i class="fas fa-medal rank-icon text-secondary"></i>
+                        {% elif loop.index == 3 %}
+                        <i class="fas fa-medal rank-icon text-bronze"></i>
+                        {% else %}
+                        <i class="fas fa-file-alt rank-icon text-muted"></i>
+                        {% endif %}
+                        <span class="ms-auto">{{ result.filename }}</span>
+                    </div>
+                    <div class="result-content">
+                        <div class="match-score">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" data-percent="{{ result.similarity }}"></div>
                                 </div>
-
-                                <div class="suggestions-container">
-                                    <h4 class="mb-3 text-primary">
-                                        <i class="fas fa-lightbulb me-2"></i>Enhancement Suggestions
-                                    </h4>
-                                    {% if result.suggestions %}
-                                    <ul class="suggestions-list">
-                                        {% for suggestion in result.suggestions %}
-                                        <li>
-                                            <i class="fas fa-chevron-right suggestion-icon"></i>
-                                            {{ suggestion }}
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                    {% else %}
-                                    <p class="text-muted mb-0">No suggestions available for this resume.</p>
-                                    {% endif %}
-                                </div>
+                                <span class="score-value">{{ result.similarity }}%</span>
                             </div>
+                            <div class="score-label">
+                                {% if result.similarity >= 80 %}
+                                Excellent Match
+                                {% elif result.similarity >= 60 %}
+                                Good Match
+                                {% elif result.similarity >= 40 %}
+                                Moderate Match
+                                {% else %}
+                                Low Match
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="suggestions-container">
+                            <h4 class="mb-3 text-primary">
+                                <i class="fas fa-lightbulb me-2"></i>Enhancement Suggestions
+                            </h4>
+                            {% if result.suggestions %}
+                            <ul class="suggestions-list">
+                                {% for suggestion in result.suggestions %}
+                                <li>
+                                    <i class="fas fa-chevron-right suggestion-icon"></i>
+                                    {{ suggestion }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <p class="text-muted mb-0">No suggestions available for this resume.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
