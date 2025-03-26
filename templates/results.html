@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matching Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #6c757d;
+            --background-light: #f4f6f9;
+            --text-dark: #333;
+        }
+
+        body {
+            background-color: var(--background-light);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 900px;
+            padding: 2rem 1rem;
+        }
+
+        .header-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header-section h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .analysis-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .job-description-box {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .job-description-box h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .content-box {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .content-box pre {
+            white-space: pre-wrap;
+            font-family: inherit;
+            margin: 0;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .ranked-results {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .result-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            border-left: 5px solid transparent;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-card[data-rank="1"] { border-left-color: #ffd700; }
+        .result-card[data-rank="2"] { border-left-color: #c0c0c0; }
+        .result-card[data-rank="3"] { border-left-color: #cd7f32; }
+
+        .rank-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f4f6f9;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .rank-badge .rank-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .rank-icon {
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+        }
+
+        .result-content {
+            padding: 1.5rem;
+        }
+
+        .match-score {
+            margin-top: 1rem;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-right: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.5s ease-in-out;
+        }
+
+        .score-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .score-label {
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+        }
+
+        .suggestions-container {
+            margin-top: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .suggestions-list {
+            padding-left: 1.5rem;
+        }
+
+        .suggestions-list li {
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .suggestion-icon {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .action-buttons {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .no-results {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Custom scrollbar */
+        .content-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-box::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .content-box::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .content-box::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1>Resume Matching Results</h1>
+            <p class="text-muted">Ranked by relevance to the job description</p>
+            <a href="/" class="btn btn-outline-primary mt-2">
+                <i class="fas fa-arrow-left me-2"></i>Back to Home
+            </a>
+        </div>
+
+        <div class="analysis-container">
+            <div class="job-description-box">
+                <h2><i class="fas fa-file-alt me-2"></i>Job Description</h2>
+                <div class="content-box">
+                    <pre>{{ job_description }}</pre>
+                </div>
+            </div>
+
+            {% if results %}
+            <div class="results-header mb-4">
+                <h2 class="text-primary"><i class="fas fa-trophy me-2"></i>Top Matches</h2>
+                <p class="text-muted">{{ results|length }} resumes analyzed</p>
+            </div>
+
+            <div class="ranked-results">
+                {% for result in results %}
+                <div class="result-card" data-rank="{{ loop.index }}">
+                    <div class="row g-0">
+                        <div class="col-md-2 rank-badge">
+                            <span class="rank-number">{{ loop.index }}</span>
+                            {% if loop.index == 1 %}
+                            <i class="fas fa-crown rank-icon text-warning"></i>
+                            {% elif loop.index == 2 %}
+                            <i class="fas fa-medal rank-icon text-secondary"></i>
+                            {% elif loop.index == 3 %}
+                            <i class="fas fa-medal rank-icon text-bronze"></i>
+                            {% else %}
+                            <i class="fas fa-file-alt rank-icon text-muted"></i>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-10">
+                            <div class="result-content">
+                                <div class="result-header">
+                                    <h3 class="mb-3">{{ result.filename }}</h3>
+                                    <div class="match-score">
+                                        <div class="progress-container">
+                                            <div class="progress-bar">
+                                                <div class="progress" data-percent="{{ result.similarity }}"></div>
+                                            </div>
+                                            <span class="score-value">{{ result.similarity }}%</span>
+                                        </div>
+                                        <div class="score-label">
+                                            {% if result.similarity >= 80 %}
+                                            Excellent Match
+                                            {% elif result.similarity >= 60 %}
+                                            Good Match
+                                            {% elif result.similarity >= 40 %}
+                                            Moderate Match
+                                            {% else %}
+                                            Low Match
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="suggestions-container">
+                                    <h4 class="mb-3 text-primary">
+                                        <i class="fas fa-lightbulb me-2"></i>Enhancement Suggestions
+                                    </h4>
+                                    {% if result.suggestions %}
+                                    <ul class="suggestions-list">
+                                        {% for suggestion in result.suggestions %}
+                                        <li>
+                                            <i class="fas fa-chevron-right suggestion-icon"></i>
+                                            {{ suggestion }}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                    <p class="text-muted mb-0">No suggestions available for this resume.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-results">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3 class="text-primary">No Results Found</h3>
+                <p class="text-muted">Please try again with different files or check your job description.</p>
+            </div>
+            {% endif %}
+
+            <div class="action-buttons">
+                <a href="/batch-analysis" class="btn btn-primary">
+                    <i class="fas fa-redo me-2"></i>Analyze Another Batch
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.progress').forEach(function(elem) {
+                const percent = elem.getAttribute('data-percent');
+                elem.style.width = percent + '%';
+            });
+        });
+    </script>
+</body>
+</html>

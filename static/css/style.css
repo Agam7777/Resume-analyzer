@@ -1,0 +1,590 @@
+/* Main Styles */
+:root {
+    --primary-color: #4a6fdc;
+    --primary-light: #e8eeff;
+    --secondary-color: #2c3e50;
+    --accent-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --border-color: #ddd;
+    --text-color: #333;
+    --text-light: #6c757d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f5f8fa;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: var(--text-light);
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Form Styles */
+.form-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-card h2 {
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.form-card p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+textarea, input[type="file"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 111, 220, 0.2);
+}
+
+.file-info {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #3a5fc8;
+    transform: translateY(-1px);
+}
+
+.secondary-btn {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.secondary-btn:hover {
+    background-color: var(--primary-light);
+}
+
+/* Message Styles */
+.message {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Tabs Styles */
+.tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    background-color: var(--light-color);
+    cursor: pointer;
+    font-weight: 500;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab-btn:first-child {
+    border-top-left-radius: 4px;
+}
+
+.tab-btn:last-child {
+    border-top-right-radius: 4px;
+}
+
+.tab-btn.active {
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Results Styles */
+.job-description-box {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.job-description-box h2 {
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+.content-box {
+    background-color: var(--light-color);
+    padding: 1rem;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.result-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.result-header h3 {
+    font-size: 1.25rem;
+    color: var(--secondary-color);
+}
+
+.match-score {
+    display: flex;
+    align-items: center;
+}
+
+.progress-bar {
+    width: 150px;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+.score-label {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.suggestions-container h4 {
+    margin-bottom: 0.75rem;
+    color: var(--secondary-color);
+}
+
+.suggestions-list {
+    list-style-type: none;
+}
+
+.suggestions-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.suggestions-list li:before {
+    content: '•';
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+    font-size: 1.2rem;
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+}
+
+.action-buttons {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* Detailed Analysis Styles */
+.result-card.detailed {
+    padding: 2rem;
+}
+
+.match-info {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.match-category {
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.match-category.high {
+    background-color: #d4edda;
+}
+
+.match-category.medium {
+    background-color: #fff3cd;
+}
+
+.match-category.low {
+    background-color: #f8d7da;
+}
+
+.match-label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.next-steps {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.next-steps h4 {
+    margin-bottom: 0.75rem;
+    color: var(--secondary-color);
+}
+
+.next-steps ul {
+    list-style-type: none;
+}
+
+.next-steps li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.next-steps li:before {
+    content: '✓';
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    padding-top: 2rem;
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+/* Add these styles to your existing style.css */
+
+/* Homepage Styles */
+.options-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.option-card {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.option-card h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.option-card p {
+    color: var(--text-light);
+}
+
+/* Form Card Styles */
+.form-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-card h2 {
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.form-card p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+/* Batch Upload Styling */
+.file-upload-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.file-upload-group input[type="file"] {
+    flex: 1;
+}
+
+.add-file-btn, .remove-file-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.add-file-btn {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.remove-file-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Results Page Styling */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0 1rem;
+}
+
+.results-count {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.ranked-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ranked-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.ranked-card:hover {
+    transform: translateY(-3px);
+}
+
+.rank-badge {
+    width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-light);
+    padding: 1rem 0;
+}
+
+.rank-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.rank-icon {
+    font-size: 1.2rem;
+    margin-top: 5px;
+}
+
+.rank-icon .gold {
+    color: gold;
+}
+
+.rank-icon .silver {
+    color: silver;
+}
+
+.rank-icon .bronze {
+    color: #cd7f32; /* bronze */
+}
+
+.ranked-content {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.score-value {
+    font-weight: bold;
+    min-width: 40px;
+    text-align: right;
+}
+
+.score-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 3px;
+}
+
+.suggestions-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0.5rem 0;
+}
+
+.suggestions-list li i {
+    color: var(--primary-color);
+    margin-top: 3px;
+}
+
+.no-suggestions {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ranked-card {
+        flex-direction: column;
+    }
+    
+    .rank-badge {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 0.5rem 1rem;
+        gap: 10px;
+    }
+    
+    .rank-number {
+        font-size: 1.2rem;
+    }
+}

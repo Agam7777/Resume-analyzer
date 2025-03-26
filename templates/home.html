@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matcher & Enhancer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-light">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold text-primary">Resume Matcher & Enhancer</h1>
+        <p class="lead text-muted">Welcome to the Resume Matcher & Enhancer. Choose an option below to get started.</p>
+
+        <div class="row g-4 mt-4">
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm" onclick="window.location.href='/batch-analysis'">
+                    <div class="card-body text-center">
+                        <h2 class="card-title text-primary">Batch Resume Analysis</h2>
+                        <p class="card-text text-muted">Upload multiple resumes to find the best matches for a job description.</p>
+                        <button class="btn btn-primary">Get Started</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm" onclick="window.location.href='/single-analysis'">
+                    <div class="card-body text-center">
+                        <h2 class="card-title text-primary">Single Resume Enhancement</h2>
+                        <p class="card-text text-muted">Get personalized suggestions to improve your resume for a specific job.</p>
+                        <button class="btn btn-primary">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (with Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

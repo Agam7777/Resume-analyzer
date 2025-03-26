@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis - Resume Improver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Resume Analysis</h1>
+            <a href="/" class="back-link">← Back to Home</a>
+        </header>
+
+        <div class="analysis-container">
+            <div class="job-description-box">
+                <h2>Job Description</h2>
+                <div class="content-box">
+                    <pre>{{ job_description }}</pre>
+                </div>
+            </div>
+
+            <div class="result-card detailed">
+                <div class="result-header">
+                    <h3>{{ result.filename }}</h3>
+                    <div class="match-score">
+                        <div class="progress-bar">
+                            <div class="progress" data-percent="{{ result.similarity }}"></div>
+                        </div>
+                        <span class="score-label">{{ result.similarity }}% Match</span>
+                    </div>
+                </div>
+                
+                <div class="match-info">
+                    <div class="match-category {% if result.similarity >= 80 %}high{% elif result.similarity >= 60 %}medium{% else %}low{% endif %}">
+                        {% if result.similarity >= 80 %}
+                            <span class="match-label">High Match</span>
+                            <p>Your resume is well-aligned with this job description.</p>
+                        {% elif result.similarity >= 60 %}
+                            <span class="match-label">Moderate Match</span>
+                            <p>Your resume matches some requirements but could use improvement.</p>
+                        {% else %}
+                            <span class="match-label">Low Match</span>
+                            <p>Your resume needs significant improvements to match this job.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="suggestions-container">
+                    <h4>Improvement Suggestions</h4>
+                    {% if result.suggestions %}
+                        <ul class="suggestions-list">
+                            {% for suggestion in result.suggestions %}
+                                <li>{{ suggestion }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No suggestions available. Your resume seems well optimized for this job!</p>
+                    {% endif %}
+                </div>
+                
+                <div class="next-steps">
+                    <h4>Next Steps</h4>
+                    <ul>
+                        {% if result.similarity < 50 %}
+                        <li>Prioritize adding missing skills: {{ result.suggestions[0]|replace("Consider adding these key skills: ", "") }}</li>
+                        <li>Focus on adding 3-5 quantifiable achievements from your experience</li>
+                        {% elif result.similarity < 75 %}
+                        <li>Optimize existing content with more action verbs</li>
+                        <li>Add 1-2 metrics to your current bullet points</li>
+                        {% else %}
+                        <li>Fine-tune section ordering for better ATS parsing</li>
+                        {% endif %}
+                        <li>Review formatting using our <a href="https://www.indeed.com/career-advice/resumes-cover-letters/ats-resume-template#:~:text=You%20should%20use%20the%20reverse,education%20or%20experience%20and%20skills.">formatting guide</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/" class="btn secondary-btn">Analyze Another Resume</a>
+        </div>
+
+        <footer>
+            <p>Resume Improver - Using AI to help you land your dream job</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.progress').forEach(function(elem) {
+                const percent = elem.getAttribute('data-percent');
+                elem.style.width = percent + '%';
+            });
+        });
+    </script>
+</body>
+</html>

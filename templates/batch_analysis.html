@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Resume Analysis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .file-input-container {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .file-preview {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .file-preview .file-info {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        .file-preview .remove-btn {
+            color: #dc3545;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .add-another-btn {
+            margin-top: 10px;
+        }
+        #fileInputsContainer {
+            margin-bottom: 15px;
+        }
+        .duplicate-error {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 5px;
+            display: none;
+        }
+        .file-input-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .file-input-wrapper input[type="file"] {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <header class="text-center mb-4">
+            <h1 class="display-5 fw-bold text-primary">Batch Resume Analysis</h1>
+            <a href="/" class="btn btn-outline-primary">← Back to Home</a>
+        </header>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-primary">Upload Multiple Resumes</h2>
+                <p class="card-text text-muted">Upload multiple resumes to find the best matches for a job description.</p>
+
+                <form action="/matcher" method="post" enctype="multipart/form-data" id="batchForm">
+                    <div class="mb-3">
+                        <label for="jobDescription" class="form-label">Job Description:</label>
+                        <textarea class="form-control" id="jobDescription" name="job_description" rows="10" placeholder="Paste the job description here..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Upload Resumes:</label>
+                        <div id="fileInputsContainer">
+                            <!-- File inputs will be added here dynamically -->
+                        </div>
+                        <button type="button" id="addAnotherBtn" class="btn btn-outline-secondary add-another-btn">
+                            <i class="fas fa-plus"></i> Add Another File
+                        </button>
+                        <div class="form-text">Upload your resume files one by one (PDF, DOCX, TXT). Maximum 10 files.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Analyze Resumes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (with Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInputsContainer = document.getElementById('fileInputsContainer');
+            const addAnotherBtn = document.getElementById('addAnotherBtn');
+            const maxFiles = 10;
+            let fileCount = 0;
+            let uploadedFiles = new Set(); // Track uploaded file names
+            
+            // Add the first file input
+            addFileInput();
+            
+            addAnotherBtn.addEventListener('click', function() {
+                if (fileCount < maxFiles) {
+                    addFileInput();
+                } else {
+                    alert(`Maximum of ${maxFiles} files reached. To add more, please remove an existing file first.`);
+                }
+            });
+            
+            function addFileInput() {
+                if (fileCount >= maxFiles) return;
+                
+                const fileId = 'resume_' + Date.now();
+                const fileInputDiv = document.createElement('div');
+                fileInputDiv.className = 'file-input-container';
+                fileInputDiv.innerHTML = `
+                    <div class="file-input-wrapper">
+                        <input type="file" class="form-control" id="${fileId}" name="resumes" accept=".pdf,.docx,.txt" required>
+                        <button type="button" class="btn btn-outline-danger remove-file-btn ms-2" ${fileCount === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="preview_${fileId}" class="file-preview" style="display: none;">
+                        <i class="fas fa-file-alt me-2"></i>
+                        <div class="file-info">
+                            <span class="file-name"></span>
+                            <small class="file-size text-muted"></small>
+                        </div>
+                        <button type="button" class="btn btn-link remove-btn text-danger p-0">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="duplicate-error" id="error_${fileId}">
+                        <i class="fas fa-exclamation-circle"></i> This file has already been added.
+                    </div>
+                `;
+                
+                fileInputsContainer.appendChild(fileInputDiv);
+                fileCount++;
+                
+                const fileInput = fileInputDiv.querySelector('input[type="file"]');
+                const removeBtn = fileInputDiv.querySelector('.remove-file-btn');
+                const previewRemoveBtn = fileInputDiv.querySelector('.remove-btn');
+                const previewDiv = fileInputDiv.querySelector('.file-preview');
+                const fileNameSpan = fileInputDiv.querySelector('.file-name');
+                const fileSizeSpan = fileInputDiv.querySelector('.file-size');
+                const errorDiv = fileInputDiv.querySelector('.duplicate-error');
+                const fileInputWrapper = fileInputDiv.querySelector('.file-input-wrapper');
+                
+                function clearFile() {
+                    // Remove the file name from tracking
+                    if (fileInput.files.length > 0) {
+                        uploadedFiles.delete(fileInput.files[0].name);
+                    }
+                    
+                    // Reset file input
+                    fileInput.value = '';
+                    
+                    // Hide preview, show file input
+                    previewDiv.style.display = 'none';
+                    fileInputWrapper.style.display = 'flex';
+                    errorDiv.style.display = 'none';
+                    
+                    // Disable remove button for first input if empty
+                    if (fileInputDiv === fileInputsContainer.firstElementChild) {
+                        removeBtn.disabled = true;
+                    }
+                }
+                
+                // Remove button in input group
+                removeBtn.addEventListener('click', function() {
+                    // If this is the first input and no file is selected, do nothing
+                    if (fileInputDiv === fileInputsContainer.firstElementChild && fileInput.files.length === 0) {
+                        return;
+                    }
+                    
+                    // Remove the entire file input container
+                    fileInputsContainer.removeChild(fileInputDiv);
+                    fileCount--;
+                    
+                    // Update uploaded files set
+                    if (fileInput.files.length > 0) {
+                        uploadedFiles.delete(fileInput.files[0].name);
+                    }
+                    
+                    // Update remove buttons
+                    updateRemoveButtons();
+                });
+                
+                // Remove button in preview
+                previewRemoveBtn.addEventListener('click', clearFile);
+                
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        const file = this.files[0];
+                        
+                        // Check for duplicate file
+                        if (uploadedFiles.has(file.name)) {
+                            errorDiv.style.display = 'block';
+                            this.value = ''; // Clear the input
+                            return;
+                        } else {
+                            errorDiv.style.display = 'none';
+                        }
+                        
+                        // Add to uploaded files set
+                        uploadedFiles.add(file.name);
+                        
+                        fileNameSpan.textContent = file.name;
+                        fileSizeSpan.textContent = formatFileSize(file.size);
+                        previewDiv.style.display = 'flex';
+                        fileInputWrapper.style.display = 'none';
+                        
+                        // Enable remove button after file is selected
+                        removeBtn.disabled = false;
+                    }
+                });
+                
+                // Update remove buttons state
+                updateRemoveButtons();
+            }
+            
+            function updateRemoveButtons() {
+                const inputs = fileInputsContainer.querySelectorAll('.file-input-container');
+                inputs.forEach((input, index) => {
+                    const removeBtn = input.querySelector('.remove-file-btn');
+                    const fileInput = input.querySelector('input[type="file"]');
+                    
+                    // First input is special case
+                    if (index === 0) {
+                        removeBtn.disabled = fileInput.files.length === 0;
+                    }
+                });
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // Form submission validation
+            document.getElementById('batchForm').addEventListener('submit', function(e) {
+                const fileInputs = document.querySelectorAll('input[type="file"]');
+                let hasFiles = false;
+                
+                fileInputs.forEach(input => {
+                    if (input.files.length > 0) {
+                        hasFiles = true;
+                    }
+                });
+                
+                if (!hasFiles) {
+                    e.preventDefault();
+                    alert('Please upload at least one resume file.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
